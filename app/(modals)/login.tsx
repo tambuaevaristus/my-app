@@ -20,7 +20,7 @@ enum Strategy {
 }
 
 const Page = () => {
-  // useWarmUpBrowser();
+  useWarmUpBrowser();
 
   const { startOAuthFlow: googleAuth } = useOAuth({ strategy: "oauth_google" });
   const { startOAuthFlow: appleAuth } = useOAuth({ strategy: "oauth_apple" });
