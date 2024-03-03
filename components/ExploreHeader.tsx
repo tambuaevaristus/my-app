@@ -43,12 +43,16 @@ const categories = [
   },
 ];
 
-const ExploreHeader = () => {
+interface Props{
+  onCategoryChanged: (category:string) => void;
+}
+const ExploreHeader = ({onCategoryChanged}:Props) => {
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const selectCategory = (index: number) => {
     setActiveIndex(index);
+    onCategoryChanged(categories[index].name)
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
