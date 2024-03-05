@@ -11,7 +11,7 @@ import { Link } from "expo-router";
 import { GrantType } from "expo-auth-session";
 import Colors from "@/constants/Colors";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-
+import * as Haptics from "expo-haptics";
 const categories = [
   {
     name: "Tiny homes",
@@ -43,16 +43,23 @@ const categories = [
   },
 ];
 
-interface Props{
-  onCategoryChanged: (category:string) => void;
+interface Props {
+  onCategoryChanged: (category: string) => void;
 }
-const ExploreHeader = ({onCategoryChanged}:Props) => {
+const ExploreHeader = ({ onCategoryChanged }: Props) => {
+  const scrollRef = useRef<ScrollView>(null);
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const selectCategory = (index: number) => {
+    const selected = itemsRef.current[index];
     setActiveIndex(index);
-    onCategoryChanged(categories[index].name)
+    onCategoryChanged(categories[index].name);
+
+    selected?.measure((x) => {
+      scrollRef.current?.scrollTo({ x: x, y: 0, animated: true });
+    });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -73,6 +80,7 @@ const ExploreHeader = ({onCategoryChanged}:Props) => {
         </View>
 
         <ScrollView
+          ref={scrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
@@ -92,7 +100,11 @@ const ExploreHeader = ({onCategoryChanged}:Props) => {
                   : styles.categoriesBtn
               }
             >
-              <MaterialIcons size={24} name={item.icon as any} color={activeIndex ===index ? "#000": Colors.grey} />
+              <MaterialIcons
+                size={24}
+                name={item.icon as any}
+                color={activeIndex === index ? "#000" : Colors.grey}
+              />
               <Text>{item.name}</Text>
             </TouchableOpacity>
           ))}
@@ -145,7 +157,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontFamily: "mon-sb",
-    color: '#c2c2c2',
+    color: "#c2c2c2",
   },
   categoryTextActive: {
     fontSize: 14,
